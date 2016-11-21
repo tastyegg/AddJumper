@@ -16,7 +16,7 @@
     <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>WebGL:20</UnityBuildTarget>
-    <UnityVersion>5.4.2f1</UnityVersion>
+    <UnityVersion>5.4.2f2</UnityVersion>
     <RootNamespace></RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\ExitController.cs" />
     <Compile Include="Assets\Scripts\FixedPositionX.cs" />
     <Compile Include="Assets\Scripts\FloorController.cs" />
+    <Compile Include="Assets\Scripts\InheritAngle.cs" />
     <Compile Include="Assets\Scripts\LevelGen.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\ScoreAndEvaluation.cs" />

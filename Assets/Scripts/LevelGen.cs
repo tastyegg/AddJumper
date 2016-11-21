@@ -4,8 +4,8 @@ using System.Collections;
 public class LevelGen : MonoBehaviour {
 
 	public FloorController[] fcs = null;
-	int width = 10;
-	int floorCount = 0;
+	int width = 12;
+	int floorCount = 9;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +20,6 @@ public class LevelGen : MonoBehaviour {
 	void LoadLevel()
 	{
 		FloorController fc = GameObject.FindGameObjectWithTag("Floor").GetComponent<FloorController>();
-		floorCount = 9;
 		fcs = new FloorController[floorCount];
 
 		fcs[0] = fc;
@@ -32,10 +31,10 @@ public class LevelGen : MonoBehaviour {
 
 		for (int i = 1; i < floorCount; i++)
 		{
-			int value = (int)(Random.value * 10) - 5;
+			int value = (int)(Random.value * width) - width / 2;
 			while (Contains(scrambleArray, value))
 			{
-				value = (int)(Random.value * 10) - 5;
+				value = (int)(Random.value * width) - width / 2;
 			}
 			scrambleArray[i] = value;
 		}
@@ -53,10 +52,6 @@ public class LevelGen : MonoBehaviour {
 
 	public void Reset()
 	{
-		for (int i = 0; i < floorCount; i++)
-		{
-			fcs[i].GetComponent<SpriteRenderer>().color = Color.white;
-		}
 	}
 
 	public void NextLevel(FloorController playerPlatform)
@@ -119,7 +114,6 @@ public class LevelGen : MonoBehaviour {
 		{
 			xPositions[i] = fcs[i].xPosition;
 		}
-		ArrayList availablePositions = new ArrayList();
 		for (int i = setValue; Mathf.Abs(i) <= width / 2; i -= (int)Mathf.Sign(setValue))
 		{
 			if (!Contains(xPositions, i))

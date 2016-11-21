@@ -50,6 +50,7 @@ public class FloorController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		FloatToFloorHeight();
+		transform.localRotation = Quaternion.Euler(0, 0, -1.3f * transform.position.x);
 	}
 
 	void OnBecameInvisible()

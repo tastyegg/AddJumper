@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour {
 	Rigidbody2D rb;
 	LevelGen lg;
 
+	float repeatFloat = 0;
+	float repeatInterval = 0.13f;
 	int playerXPosition = 0;
 	int playerNumber = 1;
 	int startPlatformHeight = 1;
@@ -67,28 +69,23 @@ public class PlayerController : MonoBehaviour {
 			else
 				rb.velocity = new Vector2(rb.velocity.x, -jumpSpeed);
 		}
-		/*
-		if (Input.GetKey(KeyCode.LeftArrow))
+
+		float repeatDiff = Time.time - repeatFloat;
+		if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKey(KeyCode.LeftArrow) && repeatDiff > repeatInterval)
 		{
-			rb.velocity = new Vector2(-moveSpeed, rb.velocity.y);
+			playerXPosition = Mathf.Max(playerXPosition - 1, -lg.GetWidth() / 2);
+			rb.angularVelocity = rb.angularVelocity + 180.0f;
+			repeatFloat += repeatInterval;
 		}
-		if (Input.GetKey(KeyCode.RightArrow))
+		if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKey(KeyCode.RightArrow) && repeatDiff > repeatInterval)
 		{
-			rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
+			playerXPosition = Mathf.Min(playerXPosition + 1, lg.GetWidth() / 2);
+			rb.angularVelocity = rb.angularVelocity - 180.0f;
+			repeatFloat += repeatInterval;
 		}
-		*/
-		if (!jumpAvailable)
+		if (!(Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)))
 		{
-			if (Input.GetKeyDown(KeyCode.LeftArrow))
-			{
-				playerXPosition = Mathf.Max(playerXPosition - 1, -lg.GetWidth() / 2);
-				rb.angularVelocity = rb.angularVelocity + 180.0f;
-			}
-			if (Input.GetKeyDown(KeyCode.RightArrow))
-			{
-				playerXPosition = Mathf.Min(playerXPosition + 1, lg.GetWidth() / 2);
-				rb.angularVelocity = rb.angularVelocity - 180.0f;
-			}
+			repeatFloat = Time.time;
 		}
 	}
 
@@ -111,24 +108,26 @@ public class PlayerController : MonoBehaviour {
 				int thisFloorHeight = c2d.collider.GetComponent<FloorController>().floorHeight;
 				if (thisFloorHeight == targetPlatform)
 				{
+					sae.SetResults(startPlatformHeight, playerNumber, targetPlatform, true);
+
 					//next level
 					startPlatformHeight = targetPlatform;
 					startPlatform = c2d.collider.GetComponent<FloorController>();
 					lg.NextLevel(startPlatform);
 					c2d.collider.GetComponent<SpriteRenderer>().color = Color.green;
+					transform.position = new Vector3(transform.position.x, c2d.collider.transform.position.y + 0.5f, transform.position.z);
+					transform.rotation = Quaternion.identity;
 					playerXPosition = 0;
-					playerNumber = (int)Random.Range(1.0f, 4.9f);
+					playerNumber = (int)Random.Range(1.0f, 6.9f);
 					playerCanvasText.text = "" + playerNumber;
 
-					//Corrective Bounce
-					rb.velocity = new Vector2(0, 4 * (transform.position.y - startPlatform.transform.position.y));
+					rb.velocity = Vector2.up * 1.3f;
 					rb.angularVelocity = 0;
-
-					sae.UpdateScore(startPlatformHeight);
-
 				} else if (thisFloorHeight != startPlatformHeight)
 				{
-					//reset player for incorrect landing
+					sae.SetResults(startPlatformHeight, playerNumber, thisFloorHeight, false);
+
+					rb.velocity = Vector2.up * 0.3f;
 					c2d.collider.GetComponent<SpriteRenderer>().color = Color.red;
 					c2d.collider.enabled = false;
 					sae.IncrementWrongs();
@@ -159,7 +158,7 @@ public class PlayerController : MonoBehaviour {
 		transform.rotation = Quaternion.identity;
 		playerXPosition = startPlatform.xPosition;
 		transform.position = new Vector3(startPlatform.xPosition, startPlatformHeight - 3, 0);
-		GameObject.FindObjectOfType<LevelGen>().Reset();
+		lg.Reset();
 	}
 
 	bool CheckRange(float value, int min, int max)
